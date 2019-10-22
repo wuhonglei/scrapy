@@ -10,5 +10,8 @@ import scrapy
 
 class WebvpnItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    filetype = scrapy.Field()
+    filepath = scrapy.Field()
+    filename = scrapy.Field()
+    filesize = scrapy.Field()
+    body = scrapy.Field()
