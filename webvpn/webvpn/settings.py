@@ -88,3 +88,7 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# mongodb 数据库配置
+MONGO_URI = 'localhost:27017'
+MONGO_DATABASE = 'scrapy'

@@ -23,8 +23,9 @@ class ExampleSpider(scrapy.Spider):
             yield response.follow(script, callback=self.save_response)
 
         self.save_response(response)
-        for a in response.css(self.selector.get('a')).getall():
-            yield response.follow(a, callback=self.parse)
+        for next_page in response.css(self.selector.get('a')).getall():
+            if 'javascript' not in next_page:
+                yield response.follow(next_page, callback=self.parse)
 
 
     def save_response(self, response):
@@ -34,7 +35,7 @@ class ExampleSpider(scrapy.Spider):
         item['filepath'] = response.url
         item['filename'] = self.get_filename(response.url)
         item['filesize'] = len(response.body)
-        # item['body'] = response.body
+        item['body'] = response.body
         yield item
 
 
