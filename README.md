@@ -29,3 +29,97 @@ count # 文件使用次数（以站点为单位）
 ```bash
 scrapy crawl example
 ```
+
+## 开源库
+响应特征：
+1. 文件头部含有多行注释，说明了库的基本信息和版本
+    - 压缩版本，可能在一行，也可能在多行显示注释信息
+    - 未压缩版，在多行显示注释信息
+
+以 `vue` 为例进行说明。
+文件 vue.esm.browser.js 的响应内容如下：
+
+```javascript
+/*!
+ * Vue.js v2.6.10
+ * (c) 2014-2019 Evan You
+ * Released under the MIT License.
+ */
+/*  */
+```
+
+文件 vue.esm.browser.min.js 的响应内容如下：
+
+```javascript
+/*!
+ * Vue.js v2.6.10
+ * (c) 2014-2019 Evan You
+ * Released under the MIT License.
+ */
+```
+
+思路：提取文件多行注释内容，将注释作为文件的唯一特征，如果注释内容相同，证明是同一文件，在 webvpn 优化时，可以使用外网 CDN 代替内容资源的域名，尤其是外文站点可以进行优化。
+
+## 如何爬取开源库
+> 将以下 API 链接中的 .min 字样去掉之后，获取到的 JSON 格式的返回信息是经过良好格式化的，便于人眼查看。
+
+1. 获取开源库名称列表：`https://api.bootcdn.cn/names.min.json`
+格式如下：该列表是一个 json 数组（Array），包含了所有开源库的名称（name）。
+```json
+// 20191105001042
+// https://api.bootcdn.cn/names.min.json
+
+[
+  "twitter-bootstrap",
+  "vue",
+  "react",
+  "react-dom",
+  "d3",
+  "angular.js",
+  "angular-touch",
+  ...
+]
+```
+
+2. 获取某个开源库的详细信息
+> https://api.bootcdn.cn/libraries/[name].min.json
+
+通过此接口获取到的是开源库的 JSON 对象（Object）格式的详细信息，包括所有版本以及文件列表。`[name]` 是开源库的名称，可从`[开源库简要信息列表]` 或 `[开源库名称列表]`中获取。其中，`asset` 属性是所有版本及对应文件的列表。
+以 `jquery` 为例，该请求为 `https://api.bootcdn.cn/libraries/jquery.min.json` 的响应内容如下, 3.3.1 版本的 `core.js` 文件的下载路径是：`https://cdn.bootcss.com/jquery/3.3.1/core.js`
+
+
+```json
+{
+  "name": "jquery",
+  "npmName": "jquery",
+  "version": "3.3.1",
+  "description": "JavaScript library for DOM operations",
+  "homepage": "http://jquery.com/",
+  "keywords": [
+    "jquery",
+    "library",
+    "ajax",
+    "framework",
+    "toolkit",
+    "popular"
+  ],
+  "namespace": "jQuery",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jquery/jquery.git"
+  },
+  "license": "MIT",
+  "assets": [
+    {
+      "version": "3.3.1",
+      "files": [
+        "core.js",
+        "jquery.js",
+        "jquery.min.js",
+        "jquery.slim.js",
+        "jquery.slim.min.js"
+      ]
+    },
+    ...
+  ]
+```
