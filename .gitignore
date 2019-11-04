@@ -2,3 +2,5 @@
 
 # python 编译后的文件
 *.pyc
+
+/test
